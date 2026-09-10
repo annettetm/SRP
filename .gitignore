@@ -1,0 +1,94 @@
+# ======================================
+# Python cache and local environments
+# ======================================
+__pycache__/
+*.py[cod]
+*.so
+.venv/
+venv/
+env/
+ENV/
+.conda/
+
+# Jupyter and editor files
+.ipynb_checkpoints/
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ======================================
+# Training outputs and experiment artifacts
+# ======================================
+logs/
+runs/
+outputs/
+output/
+results/
+checkpoints/
+checkpoint/
+wandb/
+tensorboard/
+
+# ======================================
+# Model weights, embeddings, and artifacts
+# ======================================
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.safetensors
+*.onnx
+*.npy
+*.npz
+*.pkl
+*.pickle
+*.joblib
+*.h5
+*.msgpack
+
+# ======================================
+# Large raw, processed, and feature data
+# ======================================
+data/
+dataset/
+datasets/
+raw/
+processed/
+RawData/
+Data/
+embeddings/
+proxyrca_data/
+
+# Common large dataset/archive formats
+*.zip
+*.tar
+*.tar.gz
+*.gz
+*.7z
+*.parquet
+*.pq
+*.dat
+
+# Large source dataset / downloaded model folders
+Amazon_beauty/
+beauty_images/
+models/
+
+# ======================================
+# Nested Git repositories
+# Keep their source files, but do not add
+# their own Git metadata inside this repo
+# ======================================
+**/.git/
+
+# Cloned third-party repositories: do not upload
+CARCA/
+FindRec/
+HM4SR/
+MML/
+MMSR/
+ProxyRCA/
+test/
