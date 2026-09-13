@@ -22,9 +22,20 @@ class CarcaGatedSolver(CarcaSolver):
         if feature_mode == 'id':
             ifeatures = None
             ifeature_dim = 0
+            image_features = None
+            text_features = None
+
+        elif feature_mode == 'three_way':
+            ifeatures = None
+            ifeature_dim = 0
+            image_features = _load_feature_matrix(data_dir, 'image')
+            text_features = _load_feature_matrix(data_dir, 'text')
+
         else:
             ifeatures = _load_feature_matrix(data_dir, feature_mode)
             ifeature_dim = ifeatures.shape[1]
+            image_features = None
+            text_features = None
 
         if type(CM['num_known_item']) is float:
             num_known_item = int(self.num_items * CM['num_known_item'])
@@ -35,6 +46,8 @@ class CarcaGatedSolver(CarcaSolver):
             num_items=self.num_items,
             ifeatures=ifeatures,
             ifeature_dim=ifeature_dim,
+            image_features=image_features,
+            text_features=text_features,
             icontext_dim=self.train_dataset.icontext_dim,
             hidden_dim=CM['hidden_dim'],
             num_known_item=num_known_item,
