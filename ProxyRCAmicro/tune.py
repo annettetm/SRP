@@ -35,10 +35,27 @@ def build_config(trial, base_run_name, tune_run_name):
             with open(p) as fp:
                 update_dict_diff(config, json.load(fp))
 
-    config['train']['optimizer']['lr'] = trial.suggest_float('lr', 1e-5, 1e-3, log=True)
-    config['train']['optimizer']['weight_decay'] = trial.suggest_float('weight_decay', 1e-3, 0.3, log=True)
-    config['model']['hidden_dim'] = trial.suggest_categorical('hidden_dim', [128, 256, 512])
-    config['model']['num_heads'] = trial.suggest_categorical('num_heads', [2, 4, 8])
+    # optimizer
+    config['train']['optimizer']['lr'] = trial.suggest_float('lr', 1e-6, 1e-3, log=True)
+    config['train']['optimizer']['weight_decay'] = trial.suggest_categorical(
+        'weight_decay', [0.0, 1e-5, 1e-4, 1e-3]
+    )
+
+    # model architecture — hidden_dim and num_heads must be paired together
+    # so the search space stays fixed across trials (Optuna requires this)
+    head_options = [
+        (128, 1), (128, 2), (128, 4),
+        (256, 1), (256, 2), (256, 4),
+        (512, 1), (512, 2), (512, 4),
+        (90, 1), (90, 2), (90, 3), (90, 5),
+        (450, 1), (450, 2), (450, 3), (450, 5),
+    ]
+    idx = trial.suggest_categorical('hidden_dim_num_heads_idx', list(range(len(head_options))))
+    hidden_dim, num_heads = head_options[idx]
+    config['model']['hidden_dim'] = hidden_dim
+    config['model']['num_heads'] = num_heads
+
+    config['model']['num_layers'] = trial.suggest_categorical('num_layers', [1, 2, 3, 4, 5])
     config['model']['dropout_prob'] = trial.suggest_float('dropout_prob', 0.0, 0.5)
     config['model']['num_proxy_item'] = trial.suggest_categorical('num_proxy_item', [64, 128, 256])
 

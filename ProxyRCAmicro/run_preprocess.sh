@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=micro_id
-#SBATCH --output=logs/micro_id%j.log
-#SBATCH --error=logs/micro_id%j.err
+#SBATCH --job-name=text1_preprocess
+#SBATCH --output=logs/text1_preprocess%j.log
+#SBATCH --error=logs/text1_preprocess%j.err
 #SBATCH --mail-user=lakshmisureshbabu095@gmail.com
 #SBATCH --mail-type=ALL
 #SBATCH --partition=STUD

@@ -159,7 +159,7 @@ class BPRContrastiveTrainDataset(Dataset):
 
         # sample negatives
         extract_tokens = [positive_iindex]
-        """ negative_tokens = set()
+        negative_tokens = set()
         while len(negative_tokens) < self.train_num_negatives:
             while True:
                 sample_index = self.rng.randrange(0, num_iindices_train)
@@ -167,11 +167,11 @@ class BPRContrastiveTrainDataset(Dataset):
                 if negative_iindex not in iindexset_point and negative_iindex not in negative_tokens:
                     break
             negative_tokens.add(negative_iindex)
-        negative_tokens = list(negative_tokens) """
-        if self.train_num_negatives < 0:
+        negative_tokens = list(negative_tokens)
+        """ if self.train_num_negatives < 0:
             negative_tokens = [
                 iindex
-                for iindex in self.iindices_train
+                for iindex in range(1, self.num_items + 1)
                 if iindex not in iindexset_point
             ]
         else:
@@ -183,7 +183,7 @@ class BPRContrastiveTrainDataset(Dataset):
                     if negative_iindex not in iindexset_point and negative_iindex not in negative_tokens:
                         break
                 negative_tokens.add(negative_iindex)
-            negative_tokens = list(negative_tokens) #end
+            negative_tokens = list(negative_tokens) """ #end
 
         extract_tokens.extend(negative_tokens)
 
@@ -325,7 +325,7 @@ class LWPContrastiveTrainDataset(Dataset):
         profile_icontexts = [self.padding_icontext] * padding_len + profile_icontexts
 
         # sample negatives
-        """ negative_tokens = set()
+        negative_tokens = set()
         while len(negative_tokens) < self.train_num_negatives:
             while True:
                 sample_index = self.rng.randrange(0, num_iindices_train)
@@ -333,11 +333,11 @@ class LWPContrastiveTrainDataset(Dataset):
                 if negative_iindex not in iindexset_point and negative_iindex not in negative_tokens:
                     break
             negative_tokens.add(negative_iindex)
-        negative_tokens = list(negative_tokens) """
-        if self.train_num_negatives < 0:
+        negative_tokens = list(negative_tokens)
+        """ if self.train_num_negatives < 0:
             negative_tokens = [
                 iindex
-                for iindex in self.iindices_train
+                for iindex in range(1, self.num_items + 1)
                 if iindex not in iindexset_point
             ]
         else:
@@ -349,8 +349,7 @@ class LWPContrastiveTrainDataset(Dataset):
                     if negative_iindex not in iindexset_point and negative_iindex not in negative_tokens:
                         break
                 negative_tokens.add(negative_iindex)
-            negative_tokens = list(negative_tokens) #end
-            
+            negative_tokens = list(negative_tokens) """ #end
         extract_tokens.extend(negative_tokens)
 
         # fill extract
@@ -425,9 +424,6 @@ class EvalDataset(Dataset):
                 for iindex, _, _ in urows:
                     aiindexset.add(iindex)
                 self.uindex2aiindexset_test[uindex] = aiindexset
-        with open(os.path.join(self.data_root, name, 'ns_random.pkl'), 'rb') as fp:
-            self.uindex2negatives_test = pickle.load(fp)
-
         # settle down
         if target == 'valid':
             self.uindices = []
@@ -456,6 +452,12 @@ class EvalDataset(Dataset):
             if uindex not in self.uindex2iindexset:
                 self.uindex2iindexset[uindex] = set()
             self.uindex2iindexset[uindex] |= iindexset_user
+        self.uindex2iindexset_all = {}
+        for uindex in self.uindex2iindexset:
+            iindexset_all = set(self.uindex2iindexset[uindex])
+            for iindex, _, _ in self.uindex2urows_test.get(uindex, []):
+                iindexset_all.add(iindex)
+            self.uindex2iindexset_all[uindex] = iindexset_all
         self.iindices_known = list(self.iindexset_known)
         self.num_items = len(self.iid2iindex)
 
@@ -520,7 +522,11 @@ class EvalDataset(Dataset):
                 negative_tokens.add(negative_iindex)
             negative_tokens = list(negative_tokens)
         elif self.target == 'test':
-            negative_tokens = self.uindex2negatives_test[uindex]
+            seen_iindices = self.uindex2iindexset_all[uindex]
+            negative_tokens = [
+                iindex for iindex in range(1, self.num_items + 1)
+                if iindex not in seen_iindices
+            ]
         extract_tokens.extend(negative_tokens)
 
         # bake extract

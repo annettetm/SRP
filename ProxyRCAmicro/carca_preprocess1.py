@@ -17,7 +17,7 @@ ICONTEXT_COLUMNS = ["year", "month", "day", "dayofweek", "dayofyear", "week"]
 BASE = Path("/home/mathew/SRP/ProxyRCAmicro")
 PROCESSED = BASE / "processed/micro"
 EMB = BASE / "embeddings/micro"
-DATA_DIR = BASE / "data/micro_image"
+DATA_DIR = BASE / "data/micro_text"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -198,35 +198,33 @@ def do_general_random_negative_sampling(args, df_rows):
     num_users = len(uid2uindex)
     num_items = len(iid2iindex)
     ns = {}
+    rng = Random(args.random_seed)
     for uindex in tqdm(range(1, num_users + 1), desc="* sampling"):
         seen = set(df_rows[df_rows["uindex"] == uindex]["iindex"])
-        ns[uindex] = [
-            iindex
-            for iindex in range(1, num_items + 1)
-            if iindex not in seen
-        ]
+        available_count = num_items - len(seen)
+        sample_count = min(NUM_NEGATIVE_SAMPLES, available_count)
+        if sample_count == available_count:
+            ns[uindex] = [
+                iindex
+                for iindex in range(1, num_items + 1)
+                if iindex not in seen
+            ]
+            continue
+        sampled = set()
+        while len(sampled) < sample_count:
+            iindex = rng.randint(1, num_items)
+            if iindex not in seen:
+                sampled.add(iindex)
+        ns[uindex] = list(sampled)
 
     with open(data_dir / "ns_random.pkl", "wb") as fp:
         pickle.dump(ns, fp)
-    rng = Random(args.random_seed)
-    """ for uindex in tqdm(range(1, num_users + 1), desc="* sampling"):
-        seen = set(df_rows[df_rows["uindex"] == uindex]["iindex"])
-        sampled = set()
-        while len(sampled) < NUM_NEGATIVE_SAMPLES:
-            iindex = rng.randint(1, num_items)
-            if iindex in seen or iindex in sampled:
-                continue
-            sampled.add(iindex)
-        ns[uindex] = list(sampled)
-    with open(data_dir / "ns_random.pkl", "wb") as fp:
-        pickle.dump(ns, fp) """
-
-
+    
 def do_create_ifeature_matrix():
     data_dir = DATA_DIR
     with open(data_dir / "iid2iindex.pkl", "rb") as fp:
         iid2iindex = pickle.load(fp)
-    with open(data_dir / "iid2ifeature.pkl", "rb") as fp:
+    with open(data_dir / "iid2textfeature.pkl", "rb") as fp:
         iid2ifeature = pickle.load(fp)
     iindex2iid = {iindex: iid for iid, iindex in iid2iindex.items()}
     ifeatures = []
