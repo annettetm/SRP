@@ -1,11 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name=proxyrca_beauty1_id
-#SBATCH --output=logs/proxyrca_id%j.log
-#SBATCH --error=logs/proxyrca_id%j.err
+#SBATCH --job-name=id_beauty
+#SBATCH --output=logs/id_beauty%j.log
+#SBATCH --error=logs/id_beauty%j.err
 #SBATCH --mail-user=lakshmisureshbabu095@gmail.com
 #SBATCH --mail-type=ALL
 #SBATCH --partition=STUD
 #SBATCH --gres=gpu:1
+
 
 #source activate proxyrca
 #srun python entry.py beauty1/proxyrca

@@ -11,5 +11,5 @@ echo "This is a test echo"
 cd /home/mathew/SRP/ProxyRCA1
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate proxyrca
-srun python tune.py beauty1_image/proxyrca --n_trials 20 --trial_timeout 10800
+srun python tune1.py beauty1_image/proxyrca --n_trials 30 --trial_timeout 10800
 echo "The batch script ends."

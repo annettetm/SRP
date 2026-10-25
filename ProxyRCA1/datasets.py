@@ -424,8 +424,6 @@ class EvalDataset(Dataset):
                 for iindex, _, _ in urows:
                     aiindexset.add(iindex)
                 self.uindex2aiindexset_test[uindex] = aiindexset
-        with open(os.path.join(self.data_root, name, 'ns_random.pkl'), 'rb') as fp:
-            self.uindex2negatives_test = pickle.load(fp)
 
         # settle down
         if target == 'valid':
@@ -455,6 +453,12 @@ class EvalDataset(Dataset):
             if uindex not in self.uindex2iindexset:
                 self.uindex2iindexset[uindex] = set()
             self.uindex2iindexset[uindex] |= iindexset_user
+        self.uindex2iindexset_all = {}
+        for uindex in self.uindex2iindexset:
+            iindexset_all = set(self.uindex2iindexset[uindex])
+            for iindex, _, _ in self.uindex2urows_test.get(uindex, []):
+                iindexset_all.add(iindex)
+            self.uindex2iindexset_all[uindex] = iindexset_all
         self.iindices_known = list(self.iindexset_known)
         self.num_items = len(self.iid2iindex)
 
@@ -519,7 +523,11 @@ class EvalDataset(Dataset):
                 negative_tokens.add(negative_iindex)
             negative_tokens = list(negative_tokens)
         elif self.target == 'test':
-            negative_tokens = self.uindex2negatives_test[uindex]
+            seen_iindices = self.uindex2iindexset_all[uindex]
+            negative_tokens = [
+                iindex for iindex in range(1, self.num_items + 1)
+                if iindex not in seen_iindices
+            ]
         extract_tokens.extend(negative_tokens)
 
         # bake extract
@@ -569,3 +577,5 @@ class ItemDataset(Dataset):
         return {
             'iindex': self.iindices[index],
         }
+
+

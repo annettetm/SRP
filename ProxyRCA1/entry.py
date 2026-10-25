@@ -20,9 +20,9 @@ default_config = {
         'GPU_COUNT': torch.cuda.device_count(),
     },
     'solver': 'CarcaSolver',
-    'dataset': 'men',
+    'dataset': 'beauty1_fusion',
     'dataloader': {
-        'sequence_len': 35,  # depends on dataset
+        'sequence_len': 75,  # depends on dataset
         'train_num_negatives': 100,
         'valid_num_negatives': 100,
         'random_cut_prob': 1.0,
@@ -31,29 +31,29 @@ default_config = {
         'random_seed': 12345
     },
     'model': {
-        'hidden_dim': 90,
+        'hidden_dim': 256,
         'temporal_dim': 32,
-        'num_proxy_item': 64,
+        'num_proxy_item': 128,
         'num_known_item': 0,
-        'num_layers': 2,
-        'num_heads': 3,
-        'dropout_prob': 0.49505732742069974,
+        'num_layers': 1,
+        'num_heads': 2,
+        'dropout_prob':0.1,
         'temperature': 0.1,
         'random_seed':12345,
         'feature_mode': 'ifeatures', 
 
     },
     'train': {
-        'epoch': 150,
-        'every': 10,
+        'epoch': 200, 
+        'every': 10, 
         'patience': 80,
         'batch_size': 128,
         'optimizer': {
             'algorithm': 'adamw',
-            'lr': 0.0007986117904463728,
+            'lr':1e-4,
             'beta1': 0.9,
             'beta2': 0.999,
-            'weight_decay': 0.001,
+            'weight_decay':0.01,
             'amsgrad': False,
         },
     },
@@ -85,7 +85,8 @@ def update_dict_diff(base, diff):
 if __name__ == '__main__':
 
     # args
-    args: argparse.Namespace = parse_args()
+    
+    args: argparse.Namespace = parse_args() 
 
     # settle dirs
     run_root: str = os.path.join(ROOT, RUNS)
@@ -117,7 +118,7 @@ if __name__ == '__main__':
     # lock config
     with open(os.path.join(run_dir, 'config-lock.json'), 'w') as fp:
         json.dump(config, fp, indent=4)
-
+    print("before solve")
     # run
     solver_class = globals()[config['solver']]
     solver = solver_class(config)

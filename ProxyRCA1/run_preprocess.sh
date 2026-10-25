@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=proxyrca_beauty1
-#SBATCH --output=logs/proxyrca_id%j.log
-#SBATCH --error=logs/proxyrca_id%j.err
+#SBATCH --job-name=beauty_idpre
+#SBATCH --output=logs/beauty_idpre%j.log
+#SBATCH --error=logs/beauty_idpre%j.err
 #SBATCH --mail-user=lakshmisureshbabu095@gmail.com
 #SBATCH --mail-type=ALL
 #SBATCH --partition=STUD

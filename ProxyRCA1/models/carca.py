@@ -91,6 +91,10 @@ class Carca(nn.Module):
             self.item_id_emb = None
             self.id_proj = None
 
+        self.id_icontext_proj = (
+            nn.Linear(icontext_dim, hidden_dim) if feature_mode == 'id' else None
+        )
+
         self.item_layernorm = LayerNorm(hidden_dim)
         self.transformers = nn.ModuleList([
             Transformer(
@@ -123,6 +127,8 @@ class Carca(nn.Module):
             id_tokens = tokens.clamp(min=0, max=self.num_items)
             id_vec = self.item_id_emb(id_tokens)
             id_vec = self.id_proj(id_vec)
+            if self.id_icontext_proj is not None:
+                id_vec = id_vec + self.id_icontext_proj(icontexts)
             parts.append(id_vec)
 
         if len(parts) == 1:

@@ -19,7 +19,7 @@ ICONTEXT_COLUMNS = ["year", "month", "day", "dayofweek", "dayofyear", "week"]
 BASE = Path("/home/mathew/SRP/ProxyRCA1")
 PROCESSED = BASE / "processed/beauty1"
 EMB = BASE / "embeddings/beauty1"
-DATA_DIR = BASE / "data/beauty1_id"
+DATA_DIR = BASE / "data/beauty1_fusion"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -241,7 +241,7 @@ def do_create_ifeature_matrix():
     data_dir = DATA_DIR
     with open(data_dir / "iid2iindex.pkl", "rb") as fp:
         iid2iindex = pickle.load(fp)
-    with open(data_dir / "iid2textfeature.pkl", "rb") as fp:
+    with open(data_dir / "iid2ifeature.pkl", "rb") as fp:
         iid2ifeature = pickle.load(fp)
 
     iindex2iid = {iindex: iid for iid, iindex in iid2iindex.items()}
